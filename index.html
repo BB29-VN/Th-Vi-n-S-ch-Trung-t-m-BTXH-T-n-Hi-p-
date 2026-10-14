@@ -19,9 +19,9 @@
                 <p class="text-indigo-100 text-sm mt-1">Hệ thống quản lý dữ liệu sách tại 9 Nhà</p>
             </div>
             <div class="mt-4 md:mt-0 flex flex-wrap gap-2">
-                <button id="btn-tab-search" class="px-4 py-2 bg-white text-indigo-600 font-medium rounded-lg shadow transition">Tra cứu sách</button>
-                <button id="btn-tab-borrow" class="px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-400 transition">Ghi nhận Mượn/Trả</button>
-                <button id="btn-tab-manage" class="px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-400 transition">Thêm / Nhập Excel</button>
+                <button onclick="switchTab('search')" id="btn-tab-search" class="px-4 py-2 bg-white text-indigo-600 font-medium rounded-lg shadow transition">Tra cứu sách</button>
+                <button onclick="switchTab('borrow')" id="btn-tab-borrow" class="px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-400 transition">Ghi nhận Mượn/Trả</button>
+                <button onclick="switchTab('manage')" id="btn-tab-manage" class="px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-400 transition">Thêm / Nhập Excel</button>
             </div>
         </header>
 
@@ -31,7 +31,7 @@
                 <label class="block text-sm font-semibold text-slate-700 mb-2">Tra cứu nhanh theo Mã sách, Barcode, SĐKCB hoặc Tên sách:</label>
                 <div class="flex gap-2">
                     <input type="text" id="searchInput" placeholder="Nhập từ khóa (VD: S001, Harry Potter, SĐKCB...)" class="flex-1 px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <button id="btnSearch" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition">Tìm kiếm</button>
+                    <button onclick="searchBooks()" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition">Tìm kiếm</button>
                 </div>
             </div>
 
@@ -69,7 +69,7 @@
                 <!-- Form Mượn Sách -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <h2 class="text-lg font-bold text-indigo-600 mb-4">📖 Lập Phiếu Mượn Sách</h2>
-                    <form id="borrowForm" class="space-y-4">
+                    <form id="borrowForm" onsubmit="handleBorrow(event)" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-1">Mã sách hoặc Barcode cần mượn:</label>
                             <input type="text" id="borrowBookCode" required placeholder="VD: S001" class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500">
@@ -89,7 +89,7 @@
                 <!-- Form Trả Sách -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <h2 class="text-lg font-bold text-emerald-600 mb-4">🔄 Trả Sách</h2>
-                    <form id="returnForm" class="space-y-4">
+                    <form id="returnForm" onsubmit="handleReturn(event)" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-1">Mã sách hoặc Barcode trả:</label>
                             <input type="text" id="returnBookCode" required placeholder="VD: S001" class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500">
@@ -111,13 +111,13 @@
                     <h2 class="text-lg font-bold text-emerald-600 mb-2">📁 Tải Lên File Excel Sách</h2>
                     <p class="text-xs text-slate-500 mb-4">File Excel gồm các cột: <b>Barcode</b>, <b>SĐKCB</b>, <b>Tên sách</b>, <b>Môn loại</b>, <b>Đơn vị</b>, <b>Giá tiền</b>, <b>Nhà</b>, <b>Số thẻ</b>.</p>
                     <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" class="w-full p-3 border border-slate-300 rounded-xl mb-4 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
-                    <button id="btnUploadExcel" class="w-full py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition">Nhập Dữ Liệu Từ File Excel</button>
+                    <button onclick="handleExcelUpload()" class="w-full py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition">Nhập Dữ Liệu Từ File Excel</button>
                 </div>
 
                 <!-- Thêm từng cuốn -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <h2 class="text-lg font-bold text-indigo-600 mb-4">➕ Thêm Lẻ Một Cuốn Sách</h2>
-                    <form id="addBookForm" class="space-y-3">
+                    <form id="addBookForm" onsubmit="handleAddBook(event)" class="space-y-3">
                         <div class="grid grid-cols-2 gap-2">
                             <input type="text" id="newCode" required placeholder="Mã sách / Barcode *" class="px-3 py-2 border border-slate-300 rounded-xl text-sm">
                             <input type="text" id="newSdkcb" placeholder="SĐKCB (Không bắt buộc)" class="px-3 py-2 border border-slate-300 rounded-xl text-sm">
@@ -144,239 +144,226 @@
 
     <!-- JavaScript Xử Lý Toàn Bộ -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let books = JSON.parse(localStorage.getItem('library_books')) || [
-                { code: "S001", sdkcb: "KCB-01", title: "Mắt Biếc", category: "Tiểu thuyết", center: "Nhà 1", unit: "Đơn vị A", price: "50,000đ", status: "available", borrower: "", cardId: "" },
-                { code: "S002", sdkcb: "", title: "Doraemon Tập 1", category: "Truyện tranh", center: "Nhà 2", unit: "Đơn vị B", price: "20,000đ", status: "borrowed", borrower: "Nguyễn Văn A", cardId: "CARD-101" }
-            ];
+        let books = JSON.parse(localStorage.getItem('library_books')) || [
+            { code: "S001", sdkcb: "KCB-01", title: "Mắt Biếc", category: "Tiểu thuyết", center: "Nhà 1", unit: "Đơn vị A", price: "50,000đ", status: "available", borrower: "", cardId: "" },
+            { code: "S002", sdkcb: "", title: "Doraemon Tập 1", category: "Truyện tranh", center: "Nhà 2", unit: "Đơn vị B", price: "20,000đ", status: "borrowed", borrower: "Nguyễn Văn A", cardId: "CARD-101" }
+        ];
 
-            function saveToStorage() {
-                localStorage.setItem('library_books', JSON.stringify(books));
+        function saveToStorage() {
+            localStorage.setItem('library_books', JSON.stringify(books));
+        }
+
+        function switchTab(tabName) {
+            document.getElementById('tab-search').classList.add('hidden');
+            document.getElementById('tab-borrow').classList.add('hidden');
+            document.getElementById('tab-manage').classList.add('hidden');
+
+            document.getElementById('btn-tab-search').className = "px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-400 transition";
+            document.getElementById('btn-tab-borrow').className = "px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-400 transition";
+            document.getElementById('btn-tab-manage').className = "px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-400 transition";
+
+            if (tabName === 'search') {
+                document.getElementById('tab-search').classList.remove('hidden');
+                document.getElementById('btn-tab-search').className = "px-4 py-2 bg-white text-indigo-600 font-medium rounded-lg shadow transition";
+                renderBooks(books);
+            } else if (tabName === 'borrow') {
+                document.getElementById('tab-borrow').classList.remove('hidden');
+                document.getElementById('btn-tab-borrow').className = "px-4 py-2 bg-white text-indigo-600 font-medium rounded-lg shadow transition";
+            } else if (tabName === 'manage') {
+                document.getElementById('tab-manage').classList.remove('hidden');
+                document.getElementById('btn-tab-manage').className = "px-4 py-2 bg-white text-indigo-600 font-medium rounded-lg shadow transition";
+            }
+        }
+
+        function renderBooks(list) {
+            const tbody = document.getElementById('bookTableBody');
+            document.getElementById('totalBooksCount').innerText = `Tổng số: ${list.length} cuốn`;
+            tbody.innerHTML = '';
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">Không tìm thấy cuốn sách nào.</td></tr>`;
+                return;
             }
 
-            const tabSearch = document.getElementById('tab-search');
-            const tabBorrow = document.getElementById('tab-borrow');
-            const tabManage = document.getElementById('tab-manage');
+            list.forEach(book => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="p-4 font-mono font-medium text-indigo-600">${book.code || '-'}</td>
+                    <td class="p-4 text-slate-600">${book.sdkcb ? book.sdkcb : '<span class="text-slate-300 italic">Trống</span>'}</td>
+                    <td class="p-4 font-semibold text-slate-800">${book.title || '-'}</td>
+                    <td class="p-4 text-slate-600">${book.category || '-'}</td>
+                    <td class="p-4 text-slate-600">${book.center || '-'} <span class="text-xs text-slate-400 block">(${book.unit || ''})</span></td>
+                    <td class="p-4 text-slate-600">${book.price || '-'}</td>
+                    <td class="p-4">
+                        ${book.status === 'available' 
+                            ? '<span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-semibold">Có sẵn</span>' 
+                            : '<span class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-full text-xs font-semibold">Đang mượn</span>'}
+                    </td>
+                    <td class="p-4 text-sm text-slate-600">
+                        ${book.status === 'borrowed' ? `<b class="text-slate-800">${book.borrower}</b><br><span class="text-xs text-slate-400">Thẻ: ${book.cardId}</span>` : '<span class="text-slate-400">-</span>'}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
-            const btnTabSearch = document.getElementById('btn-tab-search');
-            const btnTabBorrow = document.getElementById('btn-tab-borrow');
-            const btnTabManage = document.getElementById('btn-tab-manage');
+        function searchBooks() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (!keyword) {
+                renderBooks(books);
+                return;
+            }
+            const filtered = books.filter(b => 
+                (b.code && String(b.code).toLowerCase().includes(keyword)) || 
+                (b.sdkcb && String(b.sdkcb).toLowerCase().includes(keyword)) || 
+                (b.title && String(b.title).toLowerCase().includes(keyword))
+            );
+            renderBooks(filtered);
+        }
 
-            function switchTab(tabName) {
-                tabSearch.classList.add('hidden');
-                tabBorrow.classList.add('hidden');
-                tabManage.classList.add('hidden');
+        function handleBorrow(e) {
+            e.preventDefault();
+            const code = document.getElementById('borrowBookCode').value.trim();
+            const cardId = document.getElementById('borrowCardId').value.trim();
+            const name = document.getElementById('borrowerName').value.trim();
 
-                btnTabSearch.className = "px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-400 transition";
-                btnTabBorrow.className = "px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-400 transition";
-                btnTabManage.className = "px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-400 transition";
-
-                if (tabName === 'search') {
-                    tabSearch.classList.remove('hidden');
-                    btnTabSearch.className = "px-4 py-2 bg-white text-indigo-600 font-medium rounded-lg shadow transition";
-                    renderBooks(books);
-                } else if (tabName === 'borrow') {
-                    tabBorrow.classList.remove('hidden');
-                    btnTabBorrow.className = "px-4 py-2 bg-white text-indigo-600 font-medium rounded-lg shadow transition";
-                } else if (tabName === 'manage') {
-                    tabManage.classList.remove('hidden');
-                    btnTabManage.className = "px-4 py-2 bg-white text-indigo-600 font-medium rounded-lg shadow transition";
-                }
+            const book = books.find(b => b.code && String(b.code).toLowerCase() === code.toLowerCase());
+            if (!book) {
+                alert("Không tìm thấy mã sách này trong hệ thống!");
+                return;
+            }
+            if (book.status === 'borrowed') {
+                alert(`Sách này hiện đang được mượn bởi: ${book.borrower}`);
+                return;
             }
 
-            btnTabSearch.addEventListener('click', () => switchTab('search'));
-            btnTabBorrow.addEventListener('click', () => switchTab('borrow'));
-            btnTabManage.addEventListener('click', () => switchTab('manage'));
+            book.status = 'borrowed';
+            book.borrower = name;
+            book.cardId = cardId;
+            saveToStorage();
 
-            function renderBooks(list) {
-                const tbody = document.getElementById('bookTableBody');
-                document.getElementById('totalBooksCount').innerText = `Tổng số: ${list.length} cuốn`;
-                tbody.innerHTML = '';
+            alert(`Đã lập phiếu mượn thành công cho sách: ${book.title}`);
+            document.getElementById('borrowForm').reset();
+            switchTab('search');
+        }
 
-                if (list.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">Không tìm thấy cuốn sách nào.</td></tr>`;
-                    return;
-                }
+        function handleReturn(e) {
+            e.preventDefault();
+            const code = document.getElementById('returnBookCode').value.trim();
 
-                list.forEach(book => {
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition";
-                    tr.innerHTML = `
-                        <td class="p-4 font-mono font-medium text-indigo-600">${book.code || '-'}</td>
-                        <td class="p-4 text-slate-600">${book.sdkcb ? book.sdkcb : '<span class="text-slate-300 italic">Trống</span>'}</td>
-                        <td class="p-4 font-semibold text-slate-800">${book.title || '-'}</td>
-                        <td class="p-4 text-slate-600">${book.category || '-'}</td>
-                        <td class="p-4 text-slate-600">${book.center || '-'} <span class="text-xs text-slate-400 block">(${book.unit || ''})</span></td>
-                        <td class="p-4 text-slate-600">${book.price || '-'}</td>
-                        <td class="p-4">
-                            ${book.status === 'available' 
-                                ? '<span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-semibold">Có sẵn</span>' 
-                                : '<span class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-full text-xs font-semibold">Đang mượn</span>'}
-                        </td>
-                        <td class="p-4 text-sm text-slate-600">
-                            ${book.status === 'borrowed' ? `<b class="text-slate-800">${book.borrower}</b><br><span class="text-xs text-slate-400">Thẻ: ${book.cardId}</span>` : '<span class="text-slate-400">-</span>'}
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+            const book = books.find(b => b.code && String(b.code).toLowerCase() === code.toLowerCase());
+            if (!book) {
+                alert("Không tìm thấy mã sách này!");
+                return;
+            }
+            if (book.status === 'available') {
+                alert("Cuốn sách này hiện không có ai mượn (đang ở thư viện).");
+                return;
             }
 
-            document.getElementById('btnSearch').addEventListener('click', function() {
-                const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
-                if (!keyword) {
-                    renderBooks(books);
-                    return;
-                }
-                const filtered = books.filter(b => 
-                    (b.code && String(b.code).toLowerCase().includes(keyword)) || 
-                    (b.sdkcb && String(b.sdkcb).toLowerCase().includes(keyword)) || 
-                    (b.title && String(b.title).toLowerCase().includes(keyword))
-                );
-                renderBooks(filtered);
-            });
+            book.status = 'available';
+            book.borrower = "";
+            book.cardId = "";
+            saveToStorage();
 
-            document.getElementById('borrowForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const code = document.getElementById('borrowBookCode').value.trim();
-                const cardId = document.getElementById('borrowCardId').value.trim();
-                const name = document.getElementById('borrowerName').value.trim();
+            alert(`Đã nhận trả sách thành công: ${book.title}`);
+            document.getElementById('returnForm').reset();
+            switchTab('search');
+        }
 
-                const book = books.find(b => b.code && String(b.code).toLowerCase() === code.toLowerCase());
-                if (!book) {
-                    alert("Không tìm thấy mã sách này trong hệ thống!");
-                    return;
-                }
-                if (book.status === 'borrowed') {
-                    alert(`Sách này hiện đang được mượn bởi: ${book.borrower}`);
-                    return;
-                }
+        function handleAddBook(e) {
+            e.preventDefault();
+            const code = document.getElementById('newCode').value.trim();
+            const sdkcb = document.getElementById('newSdkcb').value.trim();
+            const title = document.getElementById('newTitle').value.trim();
+            const category = document.getElementById('newCategory').value;
+            const price = document.getElementById('newPrice').value;
+            const center = document.getElementById('newCenter').value;
+            const unit = document.getElementById('newUnit').value;
 
-                book.status = 'borrowed';
-                book.borrower = name;
-                book.cardId = cardId;
-                saveToStorage();
+            if (books.some(b => b.code && String(b.code).toLowerCase() === code.toLowerCase())) {
+                alert("Mã sách hoặc Barcode này đã tồn tại!");
+                return;
+            }
 
-                alert(`Đã lập phiếu mượn thành công cho sách: ${book.title}`);
-                this.reset();
-                switchTab('search');
-            });
+            books.push({ code, sdkcb, title, category, price, center, unit, status: 'available', borrower: "", cardId: "" });
+            saveToStorage();
 
-            document.getElementById('returnForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const code = document.getElementById('returnBookCode').value.trim();
+            alert("Thêm sách mới thành công!");
+            document.getElementById('addBookForm').reset();
+            switchTab('search');
+        }
 
-                const book = books.find(b => b.code && String(b.code).toLowerCase() === code.toLowerCase());
-                if (!book) {
-                    alert("Không tìm thấy mã sách này!");
-                    return;
-                }
-                if (book.status === 'available') {
-                    alert("Cuốn sách này hiện không có ai mượn (đang ở thư viện).");
-                    return;
-                }
+        function handleExcelUpload() {
+            const fileInput = document.getElementById('excelFile');
+            if (fileInput.files.length === 0) {
+                alert("Vui lòng chọn một file Excel trước!");
+                return;
+            }
 
-                book.status = 'available';
-                book.borrower = "";
-                book.cardId = "";
-                saveToStorage();
+            const file = fileInput.files[0];
+            const reader = new FileReader();
 
-                alert(`Đã nhận trả sách thành công: ${book.title}`);
-                this.reset();
-                switchTab('search');
-            });
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
 
-            document.getElementById('addBookForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const code = document.getElementById('newCode').value.trim();
-                const sdkcb = document.getElementById('newSdkcb').value.trim();
-                const title = document.getElementById('newTitle').value.trim();
-                const category = document.getElementById('newCategory').value;
-                const price = document.getElementById('newPrice').value;
-                const center = document.getElementById('newCenter').value;
-                const unit = document.getElementById('newUnit').value;
-
-                if (books.some(b => b.code && String(b.code).toLowerCase() === code.toLowerCase())) {
-                    alert("Mã sách hoặc Barcode này đã tồn tại!");
-                    return;
-                }
-
-                books.push({ code, sdkcb, title, category, price, center, unit, status: 'available', borrower: "", cardId: "" });
-                saveToStorage();
-
-                alert("Thêm sách mới thành công!");
-                this.reset();
-                switchTab('search');
-            });
-
-            document.getElementById('btnUploadExcel').addEventListener('click', function() {
-                const fileInput = document.getElementById('excelFile');
-                if (fileInput.files.length === 0) {
-                    alert("Vui lòng chọn một file Excel trước!");
-                    return;
-                }
-
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        const firstSheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[firstSheetName];
-                        const jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-
-                        if (jsonRows.length === 0) {
-                            alert("File Excel trống hoặc không đọc được dữ liệu!");
-                            return;
-                        }
-
-                        let countAdded = 0;
-                        jsonRows.forEach(row => {
-                            const code = String(row['Barcode'] || row['barcode'] || row['Mã sách'] || row['ma_sach'] || row['Ma sach'] || '').trim();
-                            const sdkcb = String(row['SĐKCB'] || row['sdkcb'] || row['SDKCB'] || row['Số ĐKCB'] || '').trim();
-                            const title = String(row['Tên sách'] || row['tensach'] || row['Ten sach'] || row['Book Name'] || '').trim();
-                            const category = String(row['Môn loại'] || row['monloai'] || row['Mon loai'] || row['The loai'] || '').trim();
-                            const price = String(row['Giá tiền'] || row['giatien'] || row['Gia tien'] || row['Price'] || '').trim();
-                            const unit = String(row['Tên đơn vị'] || row['donvi'] || row['Don vi'] || row['Đơn vị'] || '').trim();
-                            const center = String(row['Nhà'] || row['nha'] || row['Trung tâm'] || row['trungtam'] || 'Nhà 1').trim();
-                            const sothe = String(row['Số thẻ'] || row['sothe'] || row['So the'] || '').trim();
-
-                            if (code && title) {
-                                const existing = books.find(b => String(b.code).toLowerCase() === code.toLowerCase());
-                                if (!existing) {
-                                    books.push({
-                                        code: code,
-                                        sdkcb: sdkcb,
-                                        title: title,
-                                        category: category,
-                                        price: price,
-                                        unit: unit,
-                                        center: center.includes('Nhà') ? center : 'Nhà 1',
-                                        status: sothe ? 'borrowed' : 'available',
-                                        borrower: sothe ? 'Đang mượn' : '',
-                                        cardId: sothe
-                                    });
-                                    countAdded++;
-                                }
-                            }
-                        });
-
-                        saveToStorage();
-                        alert(`Đã nhập thành công ${countAdded} cuốn sách từ file Excel lên hệ thống!`);
-                        fileInput.value = "";
-                        switchTab('search');
-                    } catch (err) {
-                        console.error(err);
-                        alert("Lỗi khi đọc file Excel. Bạn hãy kiểm tra lại định dạng file nhé!");
+                    if (jsonRows.length === 0) {
+                        alert("File Excel trống hoặc không đọc được dữ liệu!");
+                        return;
                     }
-                };
 
-                reader.readAsArrayBuffer(file);
-            });
+                    let countAdded = 0;
+                    jsonRows.forEach(row => {
+                        const code = String(row['Barcode'] || row['barcode'] || row['Mã sách'] || row['ma_sach'] || row['Ma sach'] || '').trim();
+                        const sdkcb = String(row['SĐKCB'] || row['sdkcb'] || row['SDKCB'] || row['Số ĐKCB'] || '').trim();
+                        const title = String(row['Tên sách'] || row['tensach'] || row['Ten sach'] || row['Book Name'] || '').trim();
+                        const category = String(row['Môn loại'] || row['monloai'] || row['Mon loai'] || row['The loai'] || '').trim();
+                        const price = String(row['Giá tiền'] || row['giatien'] || row['Gia tien'] || row['Price'] || '').trim();
+                        const unit = String(row['Tên đơn vị'] || row['donvi'] || row['Don vi'] || row['Đơn vị'] || '').trim();
+                        const center = String(row['Nhà'] || row['nha'] || row['Trung tâm'] || row['trungtam'] || 'Nhà 1').trim();
+                        const sothe = String(row['Số thẻ'] || row['sothe'] || row['So the'] || '').trim();
 
-            renderBooks(books);
-        });
+                        if (code && title) {
+                            const existing = books.find(b => String(b.code).toLowerCase() === code.toLowerCase());
+                            if (!existing) {
+                                books.push({
+                                    code: code,
+                                    sdkcb: sdkcb,
+                                    title: title,
+                                    category: category,
+                                    price: price,
+                                    unit: unit,
+                                    center: center.includes('Nhà') ? center : 'Nhà 1',
+                                    status: sothe ? 'borrowed' : 'available',
+                                    borrower: sothe ? 'Đang mượn' : '',
+                                    cardId: sothe
+                                });
+                                countAdded++;
+                            }
+                        }
+                    });
+
+                    saveToStorage();
+                    alert(`Đã nhập thành công ${countAdded} cuốn sách từ file Excel lên hệ thống!`);
+                    fileInput.value = "";
+                    switchTab('search');
+                } catch (err) {
+                    console.error(err);
+                    alert("Lỗi khi đọc file Excel. Bạn hãy kiểm tra lại định dạng file nhé!");
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Chạy hiển thị danh sách ban đầu khi load trang
+        renderBooks(books);
     </script>
 </body>
 </html>
